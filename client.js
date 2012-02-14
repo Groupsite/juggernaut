@@ -3251,7 +3251,7 @@ Juggernaut.fn.write = function(message){
   this.io.send(message);
 };
 
-Juggernaut.fn.subscribe = function(channel, callback){
+Juggernaut.fn.subscribe = function(channel, callback, signature, timestamp){
   if ( !channel ) throw "Must provide a channel";
 
   this.on(channel + ":data", callback);
@@ -3260,7 +3260,9 @@ Juggernaut.fn.subscribe = function(channel, callback){
     var message     = new Juggernaut.Message;
     message.type    = "subscribe";
     message.channel = channel;
-
+    message.signature = signature;
+    message.timestamp = timestamp;
+    
     this.write(message);
   });
 
