@@ -50,7 +50,7 @@ if (config_path) {
     Config.secure_mode = true;
   });
 } else {
-  path.exists("./config.js", function(exists) {
+  path.exists("./config/security.js", function(exists) {
     if (exists) {
       var custom_config = require("./config.js");
       // Get the default values
