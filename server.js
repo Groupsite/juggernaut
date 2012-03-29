@@ -52,7 +52,7 @@ if (config_path) {
 } else {
   path.exists("./config/security.js", function(exists) {
     if (exists) {
-      var custom_config = require("./config.js");
+      var custom_config = require("./config/security.js");
       // Get the default values
       Config = require("./lib/juggernaut/config");
 
