@@ -2,10 +2,10 @@
 
 var Juggernaut = function(options){
   this.options = options || {};
-  
+
   this.options.host = this.options.host || window.location.hostname;
   this.options.port = this.options.port || 8080;
-  
+
   this.handlers = {};
   this.meta     = this.options.meta;
 
@@ -47,18 +47,20 @@ Juggernaut.fn.write = function(message){
   this.io.send(message);
 };
 
-Juggernaut.fn.subscribe = function(channel, callback, signature, timestamp){
-  if ( !channel ) throw "Must provide a channel";
+Juggernaut.fn.subscribe = function(options){
+  if ( !options.channel ) throw "Must provide a channel";
 
-  this.on(channel + ":data", callback);
+  this.on(options.channel + ":data", options.onMessageReceived);
+  if(options.onAuthMessage)
+    this.on("auth:"+options.channel+":data", options.onAuthMessage);
 
   var connectCallback = this.proxy(function(){
     var message     = new Juggernaut.Message;
     message.type    = "subscribe";
-    message.channel = channel;
-    message.signature = signature;
-    message.timestamp = timestamp;
-    
+    message.channel = options.channel;
+    message.signature = options.signature;
+    message.timestamp = options.timestamp;
+
     this.write(message);
   });
 
@@ -71,9 +73,9 @@ Juggernaut.fn.subscribe = function(channel, callback, signature, timestamp){
 
 Juggernaut.fn.unsubscribe = function(channel) {
   if ( !channel ) throw "Must provide a channel";
-  
+
   this.unbind(channel + ":data");
-  
+
   var message     = new Juggernaut.Message;
   message.type    = "unsubscribe";
   message.channel = channel;
@@ -86,7 +88,7 @@ Juggernaut.fn.unsubscribe = function(channel) {
 Juggernaut.fn.trigger = function(){
   var args = [];
   for (var f=0; f < arguments.length; f++) args.push(arguments[f]);
-  
+
   var name  = args.shift();
 
   var callbacks = this.handlers[name];
